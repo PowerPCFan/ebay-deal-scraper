@@ -1,7 +1,7 @@
 # eBay Deal Scraper
 
-An alternate eBay frontend<br>
-I don't feel like writing a readme rn, i'll change it later
+An alternate eBay frontend!<br>
+I don't feel like writing a readme right now, I'll change this later.
 
 ## URL
 
