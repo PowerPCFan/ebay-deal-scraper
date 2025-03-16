@@ -1,0 +1,7 @@
+Add this to vercel.json to stop automatic deployments on main branch
+
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }

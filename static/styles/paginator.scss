@@ -1,0 +1,41 @@
+@import '/static/styles/vars.scss';
+
+// paginator
+// from this random ahh blog i found https://codewithcreativity.blogspot.com/2021/12/simple-pagination-in-html-and-css.html
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    button {
+        font-size: 1.5rem;
+        // float: left;
+        text-decoration: none;
+        width: 12.5rem;
+        height: 3.125rem;
+        color: $background;
+        background-color: $primary;
+        border-radius: 2.5rem;
+        border: none;
+        outline: none;
+        transition: .3s;
+        font-family: $bodyFont;
+        &:hover {
+            background-color: $secondary;
+            color: $text;
+            cursor: pointer;
+            border: 2px solid rgba($text, 1);
+        }
+    }
+
+    button:nth-child(1) {
+        margin-right: 0.5rem;
+    }
+
+    button:nth-child(2) {
+        margin-left: 0.5rem;
+    }
+}
+
+.fa-arrow-right, .fa-arrow-left {
+    font-size: 1.5rem;
+}

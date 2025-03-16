@@ -1,0 +1,5 @@
+{
+    "svelte.plugin.svelte.compilerWarnings": {
+        "css_unused_selector": "ignore",
+    }
+}

@@ -1,0 +1,38 @@
+# node.js
+node_modules
+node_modules/
+package-lock.json
+
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+Icon?
+ehthumbs.db
+
+# env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# git
+.git
+
+# temp files and logs
+*.temp
+*.tmp 
+*.log

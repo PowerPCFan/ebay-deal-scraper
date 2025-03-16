@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>eBay Deal Scraper</title>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<!-- <link rel="icon" href="https://www.ebay.com/favicon.ico" /> -->
+		
+		<!-- manrope, bitter, eb garamond, inter fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+		
+		<!-- chevron icon -->
+		<!-- i dont even know if this is being used -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=chevron_forward" />
+
+		<!-- font awesome  -->
+		<script src="https://kit.fontawesome.com/a451a38510.js" crossorigin="anonymous"></script>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<style>
+			:root {
+				--bg: #ebebeb;
+				/* --size: 16px;    ensure size is 16px so rem units are 'correct' */
+				/* that might be bad practice actually so i commented out */
+			}
+
+			* {	
+				box-sizing: border-box;
+			}
+
+			body {
+				width: auto;
+				background-color: var(--bg);
+				font-size: var(--size)
+			}
+
+			/* html {
+				interpolate-size: allow-keywords;
+			} */
+
+		</style>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>

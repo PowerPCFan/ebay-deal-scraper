@@ -1,0 +1,504 @@
+@import '/static/styles/vars.scss';
+
+@media (min-width: $breakpoint) { // Desktop styles
+    .result-item {
+        font-family: $bodyFont;
+        color: $text;
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .thumbnail {
+        width: 225px;
+        height: 225px;
+        object-fit: contain;
+    }
+    
+    .bid-link {
+        text-decoration: underline;
+        color: $text;
+    
+        &:visited {
+            color: $text;
+        }
+        
+        &:hover {
+            color: $primary;
+            cursor: pointer;
+        }
+    }
+    
+    .content {
+        flex: 1;
+    }
+    
+    .title-link {
+        color: $primary;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+            // color: $text // this looked weird so i commented out
+        }
+    }
+    
+    .result-item {
+        font-family: $bodyFont;
+        color: $text;
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid color.adjust($veryLightGrey, $blackness: 7.5%);
+        border-radius: 4px;
+        display: flex;
+        gap: 1rem;
+    }
+    
+    #searchresults-title-grid {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-template-rows: 2fr;
+        padding: 10px 10px 10px 10px;
+        
+        a {
+            justify-self: start;
+            align-self: start;
+            color: black;
+            &:hover, &:active, &:visited {
+                color: black;
+            }
+        }
+    
+        div { // home button
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        // Styles for the title set with the custom "inlinestyle" prop
+    }
+    
+    .fa-house-chimney {
+        font-size: 3rem;
+    }
+
+
+
+
+
+
+
+
+    // Sidebar
+    #main-flexbox {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: start;
+        align-items: stretch;
+        align-content: stretch;
+        gap: 5px;
+
+        #sidebar {
+            align-self: auto;
+            width: 325px;
+            min-width: 275px;
+            height: auto;
+            padding-left: 20px;
+            padding-right: 20px;
+
+            h1 {
+                font-family: $headingFont;
+                font-size: 2.5rem;
+                text-align: center;
+                margin-top: 0.125rem;
+                border-bottom: 0.125rem solid color.adjust($veryLightGrey, $blackness: 20%);
+            }
+
+            label {
+                margin-bottom: 0.25rem;
+                text-align: left;
+                align-self: flex-start;
+                font-size: 1rem;
+            }
+
+            // #sort {
+            //     width: 140px;
+            // }
+
+            #minPrice, #maxPrice { // these are inside a field button container
+                width: 55px;
+                height: 22px;
+                padding: 0.3125rem; // 5px... idk why i used rem unit
+            }
+
+            #exclusions {
+                width: 180px;
+            }
+
+            .field-button-container { // field + button container
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                flex-wrap: nowrap;
+                font-family: $bodyFont;
+
+                .submit-button {
+                    border-radius: 50%;
+                    width: 25px;
+                    height: 25px;
+                    outline: none;
+                    border: none;
+                    font-family: $bodyFont;
+                    background-color: $primary;
+                    color: $background;
+                    margin: 0px 0px 0px 5px; // top, right, bottom, left
+                    transition: background-color 0.25s ease, color 0.25s ease, border 0.25s ease;
+                    
+                    .fa-arrow-right {
+                        font-size: 1rem;
+                    }
+
+                    &:hover {
+                        background-color: $secondary;
+                        color: $text;
+                        cursor: pointer;
+                        border: 2px solid rgba($text, 1);
+                    }
+                }
+            }
+        }
+
+        #results-container {
+            flex-grow: 1;
+            flex-shrink: 1;
+            align-self: auto;
+            width: auto;
+            height: auto;
+        }
+    }
+
+
+    // SEARCH BUTTON
+    .search-row {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        width: 100%;
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    $transitionDuration: 0.2s;
+    #search {
+        flex: 1;
+        width: auto;
+        min-width: 300px;
+        max-width: 100%;
+        align-self: center;
+        padding: 10px;
+        border: 2px solid rgba($text, 0.6);
+        border-radius: 0.75rem;
+        height: 40px;
+        box-sizing: border-box;
+        background-color: white;
+        color: $text;
+    
+        outline: none;
+        transition: box-shadow $transitionDuration, border $transitionDuration;
+        transition-timing-function: ease-in;
+        
+        &:focus {
+            outline: none;
+            border: 2px solid rgba($text, 1);
+            box-shadow: 0 0 50px color.adjust($secondary, $lightness: 15%);
+            transition: box-shadow $transitionDuration, border $transitionDuration;
+            transition-timing-function: ease-in;
+        }
+
+        i {
+            align-self: center;
+        }
+    }
+
+    .searchbutton {
+        flex-shrink: 0;
+        align-self: stretch;
+        white-space: nowrap;
+        outline: none;
+        border: none;
+        font-family: $bodyFont;
+        background-color: $primary;
+        color: $background;
+        // padding: 10px 20px;
+        // margin: 20px auto 0px;
+        // padding: 0 20px;
+        margin: 0;
+        font-size: 1.35rem;
+        width: 120px;
+        height: 40px;
+        border-radius: 0.75rem;
+        transition: background-color 0.25s ease, color 0.25s ease, border 0.25s ease;
+    
+        &:hover {
+            background-color: $secondary;
+            color: $text;
+            cursor: pointer;
+            border: 2px solid rgba($text, 1);
+        }
+    }
+}
+
+@media (max-width: #{$breakpoint - 1}) { // Mobile styles
+    .result-item {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-family: $bodyFont;
+        color: $text;
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .thumbnail {
+        width: 225px;
+        height: 225px;
+        object-fit: contain;
+        flex-basis: 100%;
+    }
+    
+    .bid-link {
+        text-decoration: underline;
+        color: $text;
+    
+        &:visited {
+            color: $text;
+        }
+        
+        &:hover {
+            color: $primary;
+            cursor: pointer;
+        }
+    }
+    
+    .content {
+        flex: 1;
+    }
+    
+    .title-link {
+        color: $primary;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+            // color: $text // this looked weird so i commented out
+        }
+    }
+    
+    .result-item {
+        font-family: $bodyFont;
+        color: $text;
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid color.adjust($veryLightGrey, $blackness: 7.5%);
+        border-radius: 4px;
+        display: flex;
+        gap: 1rem;
+    }
+    
+    #searchresults-title-grid {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr;
+        grid-template-rows: 3fr;
+        padding: 10px 10px 10px 10px;
+        
+        a {
+            justify-self: start;
+            align-self: start;
+            color: black;
+            &:hover, &:active, &:visited {
+                color: black;
+            }
+        }
+    
+        div { // home button
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        // Styles for the title set with the custom "inlinestyle" prop
+    }
+    
+    .fa-house-chimney {
+        font-size: 2rem;
+    }
+
+
+
+
+
+
+
+
+    // Sidebar
+    #main-flexbox {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: start;
+        align-items: stretch;
+        align-content: stretch;
+        gap: 5px;
+
+        #sidebar {
+            align-self: auto;
+            width: auto;
+            height: auto;
+            padding-left: 20px;
+            padding-right: 20px;
+
+            h1 {
+                font-family: $headingFont;
+                font-size: 2.5rem;
+                text-align: center;
+                margin: 0.125rem auto 1rem auto; // top, right, bottom, left
+                border-bottom: 0.125rem solid color.adjust($veryLightGrey, $blackness: 20%);
+            }
+
+            label {
+                margin-bottom: 0.25rem;
+                text-align: left;
+                align-self: flex-start;
+                font-size: 1rem;
+            }
+
+            // #sort {
+            //     width: 140px;
+            // }
+
+            #minPrice, #maxPrice { // these are inside a field button container
+                width: 55px;
+                height: 22px;
+                padding: 0.3125rem; // 5px... idk why i used rem unit
+            }
+
+            #exclusions {
+                width: 180px;
+            }
+
+            .field-button-container { // field + button container
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                flex-wrap: nowrap;
+                font-family: $bodyFont;
+
+                .submit-button {
+                    border-radius: 50%;
+                    width: 25px;
+                    height: 25px;
+                    outline: none;
+                    border: none;
+                    font-family: $bodyFont;
+                    background-color: $primary;
+                    color: $background;
+                    margin: 0px 0px 0px 5px; // top, right, bottom, left
+                    transition: background-color 0.25s ease, color 0.25s ease, border 0.25s ease;
+                    
+                    .fa-arrow-right {
+                        font-size: 1rem;
+                    }
+
+                    &:hover {
+                        background-color: $secondary;
+                        color: $text;
+                        cursor: pointer;
+                        border: 2px solid rgba($text, 1);
+                    }
+                }
+            }
+        }
+
+        #results-container {
+            flex-grow: 1;
+            flex-shrink: 1;
+            align-self: auto;
+            width: auto;
+            height: auto;
+        }
+    }
+
+
+    // SEARCH BUTTON
+    .search-row {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        width: 100%;
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    $transitionDuration: 0.2s;
+    #search {
+        flex: 1;
+        width: auto;
+        min-width: 300px;
+        max-width: 100%;
+        align-self: center;
+        padding: 10px;
+        border: 2px solid rgba($text, 0.6);
+        border-radius: 0.75rem;
+        height: 40px;
+        box-sizing: border-box;
+        background-color: white;
+        color: $text;
+    
+        outline: none;
+        transition: box-shadow $transitionDuration, border $transitionDuration;
+        transition-timing-function: ease-in;
+        
+        &:focus {
+            outline: none;
+            border: 2px solid rgba($text, 1);
+            box-shadow: 0 0 50px color.adjust($secondary, $lightness: 15%);
+            transition: box-shadow $transitionDuration, border $transitionDuration;
+            transition-timing-function: ease-in;
+        }
+
+        i {
+            align-self: center;
+        }
+    }
+
+    .searchbutton {
+        flex-shrink: 0;
+        align-self: stretch;
+        white-space: nowrap;
+        outline: none;
+        border: none;
+        font-family: $bodyFont;
+        background-color: $primary;
+        color: $background;
+        // padding: 10px 20px;
+        // margin: 20px auto 0px;
+        // padding: 0 20px;
+        margin: 0;
+        font-size: 1.35rem;
+        width: 120px;
+        height: 40px;
+        border-radius: 0.75rem;
+        transition: background-color 0.25s ease, color 0.25s ease, border 0.25s ease;
+    
+        &:hover {
+            background-color: $secondary;
+            color: $text;
+            cursor: pointer;
+            border: 2px solid rgba($text, 1);
+        }
+    }
+}

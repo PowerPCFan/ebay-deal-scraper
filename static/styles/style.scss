@@ -1,0 +1,374 @@
+@use "sass:color";
+
+@import '/static/styles/vars.scss';
+@import '/static/styles/resultspage.scss';
+@import '/static/styles/temutailwind.scss';
+@import '/static/styles/paginator.scss';
+
+// #sveltekit-body {
+    // margin: 20px 20px 20px 20px;
+// }
+
+label {
+    display: inline-block !important;
+    font-family: $bodyFont;
+    color: $text;
+}
+
+option {
+    font-family: $bodyFont;
+}
+
+// DESKTOP AND MOBILE STYLES FOR HOME PAGE
+@media (min-width: $breakpoint) { // Desktop styles
+    .input-container {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        width: 666px;
+
+        label {
+            margin-bottom: 0.25rem;
+            text-align: left;
+            align-self: flex-start;
+            font-size: 1rem;
+        }
+
+        .search-row {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            width: 100%;
+        }
+
+        $transitionDuration: 0.2s;
+        #search {
+            flex: 1;
+            align-self: center;
+            padding: 10px;
+            border: 2px solid rgba($text, 0.6);
+            border-radius: 0.75rem;
+            width: 666px;
+            height: 40px;
+            box-sizing: border-box;
+            background-color: white;
+            color: $text;
+        
+            outline: none;
+            transition: box-shadow $transitionDuration, border $transitionDuration;
+            transition-timing-function: ease-in;
+            
+            &:focus {
+                outline: none;
+                border: 2px solid rgba($text, 1);
+                box-shadow: 0 0 50px color.adjust($secondary, $lightness: 15%);
+                transition: box-shadow $transitionDuration, border $transitionDuration;
+                transition-timing-function: ease-in;
+            }
+
+            i {
+                align-self: center;
+            }
+        }
+
+        .searchbutton {
+            align-self: stretch;
+            white-space: nowrap;
+            outline: none;
+            border: none;
+            font-family: $bodyFont;
+            background-color: $primary;
+            color: $background;
+            // padding: 10px 20px;
+            // margin: 20px auto 0px;
+            // padding: 0 20px;
+            margin: 0;
+            font-size: 1.35rem;
+            width: 120px;
+            height: 40px;
+            border-radius: 0.75rem;
+            transition: background-color 0.25s ease, color 0.25s ease, border 0.25s ease;
+        
+            &:hover {
+                background-color: $secondary;
+                color: $text;
+                cursor: pointer;
+                border: 2px solid rgba($text, 1);
+            }
+        } 
+    }
+
+    .accordio {
+        display: flex;
+        flex-direction: column;
+        color: $text;
+        // width: min(400px, 100% - 3em);
+        // min-width: 666px; 
+        margin-inline: auto;
+        font-family: $bodyFont;
+    
+        .section {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            justify-content: start;
+    
+            .section-title-filters {
+                width: 635px;
+                align-self: flex-start;
+                padding: 1em;
+                cursor: pointer;
+                user-select: none;
+                margin-top: 0.6rem;
+                border-bottom: black solid 2px;
+                border-top: black solid 2px;
+    
+                i {
+                    transition: transform 0.3s ease-in-out;
+                }
+            }
+    
+            .section-content-filters {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+                background-color: $background;
+    
+                &.active {
+                    max-height: 3000px;
+                }
+    
+                .text {
+                    // padding shorthand - top, right, bottom, left
+                    // or top | left and right | bottom if 3 are specified
+                    padding: 0rem 1rem 1rem;
+                    width: 100%;
+                }
+            }
+    
+            // .section-content {
+            //     max-height: 0;
+            //     overflow: hidden;
+            //     transition: max-height 0.3s ease-out;
+            //     background-color: $background;
+    
+            //     &.active {
+            //         max-height: 2000px;
+            //     }
+    
+            //     .text {
+            //         // padding shorthand - top, right, bottom, left
+            //         // or top | left and right | bottom if 3 are specified
+            //         padding: 0rem 1rem 1rem;
+            //         width: 100%;
+            //     }
+            // }
+        }
+    }
+
+    // condition checkboxes
+    .condition-box {
+        color: $text;
+        font-family: $bodyFont;
+        // &:hover {
+        //     cursor: pointer;
+        // }
+    }
+
+    .indented-condition-box {
+        margin-left: 1.8rem;
+    }
+
+    .panel {
+        display: none;
+        overflow: hidden;
+    }
+
+    .condition-accordion-caret {
+        transition: transform 0.25s ease-in-out;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .fa-caret-down {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: #{$breakpoint - 1}) { // Mobile styles
+    .input-container {
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        width: 80vw;
+        min-width: 300px;
+
+        label {
+            margin-bottom: 5px;
+            text-align: left;
+            align-self: flex-start;
+            font-size: 1.2rem;
+        }
+
+        // for the search box animation:
+        $transitionDuration: 0.2s;
+        #search { // search BOX
+            align-self: center;
+            padding: 10px;
+            border: 2px solid rgba($text, 0.6);
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: white;
+            color: $text;
+            font-size: 1rem;
+            height: 44px;
+        
+            outline: none;
+            transition: box-shadow $transitionDuration, border $transitionDuration;
+            transition-timing-function: ease-in;
+            
+            &:focus {
+                outline: none;
+                border: 2px solid rgba($text, 1);
+                box-shadow: 0 0 50px color.adjust($secondary, $lightness: 15%);
+                transition: box-shadow $transitionDuration, border $transitionDuration;
+                transition-timing-function: ease-in;
+            }
+
+            i {
+                align-self: center;
+            }
+        }
+    }
+
+    .search-row { // search box + button flexbox container (row on desktop, column on mobile)
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .searchbutton { // search BUTTON
+        align-self: stretch;
+        flex: 1;
+        outline: none;
+        border: none;
+        font-family: $bodyFont;
+        background-color: $primary;
+        color: $background;
+        padding: 10px;
+        margin: 1.25rem auto 0.5rem;
+        font-size: 1.6rem;
+        width: 144px;
+        height: 54px;
+        border-radius: 1rem;
+        transition: background-color 0.25s ease, color 0.25s ease, border 0.25s ease;
+        // margin-top: 35px !important; 
+        // ^^ unnecessary line
+    
+        &:hover {
+            background-color: $secondary;
+            color: $text;
+            cursor: pointer;
+            border: 0.088rem solid rgba($text, 1);
+        }
+    }
+
+    .accordio {
+        display: flex;
+        flex-direction: row;
+        color: $text;
+        // width: min(400px, 100% - 3em);
+        // min-width: 666px; 
+        margin-inline: auto;
+        font-family: $bodyFont;
+        width: 100%;
+        max-width: 100%;
+        overflow: clip;
+        justify-content: start;
+    
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            width: auto;
+            min-width: 0;
+            flex: 1;
+    
+            .section-title-filters {
+                align-self: start;
+                padding: 1em;
+                cursor: pointer;
+                user-select: none;
+                margin-top: 0.6rem;
+                border-bottom: black solid 2px;
+                border-top: black solid 2px;
+                width: 100%;
+                box-sizing: border-box;
+                max-width: 100%;
+                font-size: 1.2rem;
+    
+                i {
+                    transition: transform 0.3s ease-in-out;
+                }
+            }
+    
+            .section-content-filters {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+                background-color: $background;
+                align-self: start;
+                width: 100%;
+    
+                // &.active {
+                //     // max-height: 3000px;
+                // }
+    
+                .text {
+                    // padding shorthand - top, right, bottom, left
+                    // or top | left and right | bottom if 3 are specified
+                    padding: 0rem 1rem 1rem;
+                    // width: 100%;
+                }
+            }
+        }
+    }
+
+    // condition checkboxes
+    .condition-box {
+        color: $text;
+        font-family: $bodyFont;
+        // &:hover {
+        //     cursor: pointer;
+        // }
+    }
+
+    .indented-condition-box {
+        margin-left: 1.8rem;
+    }
+
+    .panel {
+        display: none;
+        overflow: hidden;
+    }
+
+    .condition-accordion-caret {
+        transition: transform 0.25s ease-in-out;
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .fa-caret-down {
+        font-size: 1.5rem;
+    }
+
+    #exclusions, #minPrice, #maxPrice, #sort {
+        height: 25px;
+        font-size: 1rem;
+    }
+}
