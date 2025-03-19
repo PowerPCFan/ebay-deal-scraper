@@ -43,11 +43,11 @@ const conditionMap: Record<string, string> = {
 // Function to get item condition description
 function getItemCondition(cid: string): string {
     return conditionMap[cid] || 'Undefined';
-}
+} 
 
-export const load: PageServerLoad = async ({ url }) => {
-    // Extract the legacy item ID from the URL parameters
-    const legacyItemId = url.searchParams.get('id');
+export const load: PageServerLoad = async ({ url, params }) => {
+    // Prioritize the ID from the route parameter over the query parameter
+    const legacyItemId = params.id || url.searchParams.get('id');
 
     if (!legacyItemId) {
         throw error(400, 'Missing legacy_item_id parameter');
