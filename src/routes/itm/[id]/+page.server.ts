@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit';
 import { getValidToken, invalidateToken } from '$lib/server/ebayAuth';
 import { logDebug } from '$lib/server/debug';
+import sanitizeHtml from 'sanitize-html';
 import type { PageServerLoad } from './$types';
 import type { EbayItem } from '$lib/types';
 
-// Function to format time difference
 function formatTimeDifference(difference: number): string {
     const days = Math.floor(difference / 86400);
     const hours = Math.floor((difference % 86400) / 3600);
@@ -20,7 +20,6 @@ function formatTimeDifference(difference: number): string {
     return parts.slice(0, 2).join(' ') || '0s';
 }
 
-// Mapping of condition IDs to descriptions
 const conditionMap: Record<string, string> = {
     '1000': 'New',
     '1500': 'Open Box',
@@ -40,13 +39,11 @@ const conditionMap: Record<string, string> = {
     '7000': 'For parts or not working'
 };
 
-// Function to get item condition description
 function getItemCondition(cid: string): string {
     return conditionMap[cid] || 'Undefined';
-} 
+}
 
 export const load: PageServerLoad = async ({ url, params }) => {
-    // Prioritize the ID from the route parameter over the query parameter
     const legacyItemId = params.id || url.searchParams.get('id');
 
     if (!legacyItemId) {
@@ -74,6 +71,23 @@ export const load: PageServerLoad = async ({ url, params }) => {
             }
         });
 
+        // Check for variations (status 400 with error code 11006)
+        if (response.status === 400) {
+            const errorData = await response.json();
+            if (errorData?.errors?.[0]?.errorId === 11006) {
+                logDebug('📦 Variation item detected');
+                const processed = {
+                    hasVariations: true,
+                    title: 'Item with variations',
+                    price: 'See variations',
+                    shipping: 'See variations',
+                    link: `https://www.ebay.com/itm/${legacyItemId}`,
+                    itemnumber: legacyItemId
+                };
+                return { item: processed };
+            }
+        }
+
         if (response.status === 401 || response.status === 403) {
             invalidateToken();
             throw error(response.status, 'Unauthorized or Forbidden');
@@ -91,9 +105,60 @@ export const load: PageServerLoad = async ({ url, params }) => {
 
         const item: EbayItem = await response.json();
 
-        // Process the item data
         const shippingCost = item.shippingOptions?.[0]?.shippingCost?.value;
-        const shippingText = shippingCost === '0.00' || shippingCost === undefined ? 'Free Shipping' : `+$${shippingCost} Shipping`;
+        const shippingText = shippingCost === '0.00' || shippingCost === undefined ? 'Free' : shippingCost;
+
+        // Wasn't working right so I commented out
+
+        // const sanitized_description = sanitizeHtml(item.description, {
+        //     allowedTags: [
+        //         "address", "article", "aside", "footer", "header", "h1", "h2", "h3", "h4",
+        //         "h5", "h6", "hgroup", "main", "nav", "section", "blockquote", "dd", "div",
+        //         "dl", "dt", "figcaption", "figure", "hr", "li", "main", "ol", "p", "pre",
+        //         "ul", "a", "abbr", "b", "bdi", "bdo", "br", "cite", "code", "data", "dfn",
+        //         "em", "i", "img", "kbd", "mark", "q", "rb", "rp", "rt", "rtc", "ruby", "s", 
+        //         "samp", "small", "span", "strong", "sub", "sup", "time", "u", "var", "wbr", 
+        //         "caption", "col", "colgroup", "table", "tbody", "td", "tfoot", "th", 
+        //         "thead", "tr"
+        //     ],
+        //     allowedSchemes: [ 'http', 'https', 'mailto', 'tel' ],
+        //     allowedAttributes: {
+        //         a: ['href', 'target'],
+        //         img: [ 'src', 'alt', 'title', 'width', 'height', 'loading' ]
+        //     },
+        //     allowedStyles: {
+        //         '*': {
+        //             // Box model
+        //             'margin*': [/^[0-9]+(px|em|rem|%)$/],
+        //             'padding*': [/^[0-9]+(px|em|rem|%)$/],
+        //             'border*': [/.*/],
+                    
+        //             // Layout
+        //             'display': [/^(block|inline|inline-block|flex|grid|none)$/],
+        //             'width': [/^[0-9]+(px|em|rem|%|vw)$/],
+        //             'height': [/^[0-9]+(px|em|rem|%|vh)$/],
+        //             'vertical-align': [/^(top|middle|bottom|baseline)$/],
+                    
+        //             // Typography
+        //             'color': [/^#[0-9a-f]{3,6}$/i, /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/],
+        //             'background-color': [/^#[0-9a-f]{3,6}$/i, /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/],
+        //             'font-family': [/.*/],
+        //             'font-size': [/^[0-9]+(px|em|rem|%)$/],
+        //             'font-weight': [/^(normal|bold|[1-9]00)$/],
+        //             'text-align': [/^(left|center|right|justify)$/],
+        //             'line-height': [/^[0-9]+(px|em|rem|%)?$/],
+                    
+        //             // Box sizing
+        //             'box-sizing': [/^(border-box|content-box)$/]
+        //         },
+        //     },
+        // });
+
+
+
+        // DEBUG ONLY! DO NOT UNCOMMENT
+        // oops i broke the rule
+        const sanitized_description = item.description;
 
         const now = Math.trunc(Date.now() / 1000);
         const future = Math.trunc(Number(new Date(item.itemEndDate).getTime() / 1000));
@@ -101,25 +166,49 @@ export const load: PageServerLoad = async ({ url, params }) => {
         const timeRemaining: string = formatTimeDifference(unformattedTimeRemaining);
 
         const processed = {
+            hasVariations: false,
             title: item.title,
             price: item.price?.value || 'N/A',
             bidprice: item.currentBidPrice?.value || 'N/A',
             bidcount: item.bidCount || 0,
             shipping: shippingText,
-            type: item.buyingOptions?.[0] || 'Unknown',
+            shippingService: item.shippingOptions?.[0]?.shippingServiceCode,
+            auction: item.buyingOptions?.includes('AUCTION') || false,
+            buyitnow: item.buyingOptions?.includes('FIXED_PRICE') || false,
+            bestoffer: item.buyingOptions?.includes('BEST_OFFER') || false,
             timeRemaining: timeRemaining,
             link: item.itemWebUrl,
-            itemnumber: legacyItemId,
+            description: sanitized_description,
+            itemnumber: item.legacyItemId || legacyItemId, // get the item number that is returned to the svelte page via the API response, otherwise just use the ID that was given via /itm/[id] url
             thumbnail: 'https://wsrv.nl/?url=' + encodeURIComponent(item.image?.imageUrl || ''),
+            additionalImages: item.additionalImages?.map(img => ({
+                imageUrl: 'https://wsrv.nl/?url=' + encodeURIComponent(img.imageUrl),
+                height: img.height,
+                width: img.width
+            })),
+            image: {
+                imageUrl: 'https://wsrv.nl/?url=' + encodeURIComponent(item.image?.imageUrl || ''),
+                height: item.image?.height || 0,
+                width: item.image?.width || 0
+            },
             sellerName: item.seller?.username || 'N/A',
             feedbackScore: item.seller?.feedbackScore || 0,
             feedbackPercentage: item.seller?.feedbackPercentage || '0',
-            condition: getItemCondition(item.conditionId)
+            condition: getItemCondition(item.conditionId),
+
+            availability: item.estimatedAvailabilities?.[0]?.estimatedAvailabilityStatus,
+            availablequantity: item.estimatedAvailabilities?.[0]?.estimatedAvailableQuantity,
+            soldquantity: item.estimatedAvailabilities?.[0]?.estimatedSoldQuantity,
+            remainingquantity: item.estimatedAvailabilities?.[0]?.estimatedRemainingQuantity,
+
+            city: item.itemLocation?.city,
+            state: item.itemLocation?.stateOrProvince,
+            country: item.itemLocation?.country === "US" ? "United States" : (item.itemLocation?.country || 'Unknown')
         };
 
         logDebug('✅ Item details retrieved:', processed);
-
         return { item: processed };
+
     } catch (err) {
         logDebug('💥 Error details:', {
             error: err,

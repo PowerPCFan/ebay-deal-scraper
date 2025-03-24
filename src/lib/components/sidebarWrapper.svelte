@@ -2,38 +2,38 @@
     import Titles from "$lib/components/titles.svelte";
     import Tooltip from "$lib/components/tooltip.svelte";
     import { onMount } from "svelte";
-    // import type { PageData, SearchResult } from '$lib/types.ts';
-
-    // let data: PageData;
     
-    let { children, ...rest } = $props();
-    // let allResults: SearchResult[] = data?.results || [];
+    let { children, title, ...rest } = $props();
 
-    let browserIsFirefox: boolean = false; // Declare outside, initialize to a default value
-
-    let loading: boolean = false;
-    let pageNumber: number = 1;
-
+    let sidebar: boolean = $state(false);
+    let searchbar: boolean = $state(false);
+    for (const key in rest) { 
+        if (key.match(/\bsidebar\b/)) sidebar = true;
+        if (key.match(/\bsearchbar\b/)) searchbar = true;
+    }
+    
+    let loading: boolean = $state(false);
+    let pageNumber: number = $state(1);
     let width: number;
 
-    let url: URL; // value defined in onMount
-    let baseUrl: string = $state(''); // value defined in onMount
-    let searchQuery: string = $state(''); // value defined in onMount
-    let exclusions: string = $state(''); // real value defined in onMount
-    let filterAuction: boolean = $state(false); // value defined in onMount
-    let filterBuyItNow: boolean = $state(false); // value defined in onMount
-    let sortBy: string = $state(''); // this sort thing is confusing the variables are messed up!!!
-    let minPrice: string = $state(''); // value defined in onMount
-    let maxPrice: string = $state(''); // value defined in onMount
-    let condition: string = $state(''); // value defined in onMount
+    let url: URL;
+    let baseUrl: string = $state('');
+    let searchQuery: string = $state('');
+    let exclusions: string = $state('');
+    let filterAuction: boolean = $state(false);
+    let filterBuyItNow: boolean = $state(false);
+    let sortBy: string = $state('');
+    let minPrice: string = $state('');
+    let maxPrice: string = $state('');
+    let condition: string = $state('');
 
     $effect(() => {
         exclusions = exclusions
-        .replace(/[^a-zA-Z0-9,.!@#$%^&*()_+\-=\[\]{};:\/\\|<>? ]/g, "")   // Allow most special chars except quotes
-        .replace(/\s{2,}/g, " ")            // Replace consecutive spaces with a single space
-        .replace(/,{2,}/g, ",")             // Prevent consecutive commas
-        .replace(/,\s{2,}/g, ", ")          // Prevent ",  , " (comma + multiple spaces)
-        .replace(/(,)\1+/g, ",");           // Prevent consecutive commas (like , , ,)
+        .replace(/[^a-zA-Z0-9,.!@#$%^&*()_+\-=\[\]{};:\/\\|<>? ]/g, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/,{2,}/g, ",")
+        .replace(/,\s{2,}/g, ", ")
+        .replace(/(,)\1+/g, ",");
     })
 
     function runIfEnterKey(kbdevent: KeyboardEvent, callback: () => void) {
@@ -48,16 +48,16 @@
             .filter(id => id !== null && id !== "")
             .join('|');    
         const condition = conditionIds.replace(/\|{2,}/g, '|');
-        console.log(`[Client] Debug: Condition String: ${condition}`)
+        // console.log(`[Client] Debug: Condition String: ${condition}`)
         return condition
     }
 
     function handleSubmit() {
         if (searchQuery === '') { 
             alert(`Error: no search query entered.`)
-            console.log(`Exclusions: ${exclusions}`)
+            // console.log(`Exclusions: ${exclusions}`)
         } else { 
-            pageNumber = 1; // Reset page number on new search
+            pageNumber = 1;
             loading = true;
 
             let filter = '';
@@ -69,8 +69,6 @@
                 filter = 'buy-it-now';
             }
 
-
-            // Build the condition string during form submission
             condition = buildConditionString();
             
             const queryParams = new URLSearchParams({
@@ -90,12 +88,10 @@
     }
 
     onMount(() => {
-        // // CURRENT URL
         url = new URL(window.location.href);
         baseUrl = url.origin;
-        console.log(`Current URL: ${url}\nBase URL: ${baseUrl}`)
+        // console.log(`Current URL: ${url}\nBase URL: ${baseUrl}`)
 
-        // Setting up ACTUAL variable values so the different filters are set to their proper values
         searchQuery = url.searchParams.get('search') || '';
         exclusions = url.searchParams.get('exclude') || '';
         
@@ -124,7 +120,7 @@
         else if (sort === 'end-time') { sortBy = "end-time" }
         else { sortBy = "best-match" }
 
-        { // Set the min/max price based on URL and ensure that minPrice is smaller than maxPrice
+        { 
             let minPriceTemp = url.searchParams.get('minPrice') || '';
             let maxPriceTemp = url.searchParams.get('maxPrice') || '';
             
@@ -140,11 +136,9 @@
             }
         }
 
-        // Checkboxes
         function updateMainCheckboxState(mainCheckbox: HTMLInputElement, subCheckboxes: NodeListOf<HTMLInputElement>) {
             const checkedCount = Array.from(subCheckboxes).filter(checkbox => checkbox.checked).length;
             
-            // Find the caret and panel elements associated with this checkbox
             const caretElement = mainCheckbox.parentElement?.nextElementSibling as HTMLElement;
             let panelElement = caretElement?.nextElementSibling as HTMLElement;
             while (panelElement && !panelElement.classList.contains("panel")) {
@@ -161,7 +155,6 @@
                 mainCheckbox.checked = false;
                 mainCheckbox.indeterminate = true;
                 
-                // Automatically open the accordion when indeterminate
                 if (caretElement && panelElement) {
                     panelElement.style.display = "block";
                     caretElement.style.transform = "rotate(180deg)";
@@ -199,9 +192,8 @@
         }
 
         condition = url.searchParams.get('condition') || '';
-        console.log('Condition string:', condition);
+        // console.log('Condition string:', condition);
 
-        // Modify the checkbox checking code to log failures
         const setCheckbox = (dataId: string) => {
             const checkbox = document.querySelector(`[data-id="${dataId}"]`) as HTMLInputElement;
             if (checkbox) {
@@ -226,7 +218,6 @@
         if (condition.includes("6000")) setCheckbox("6000");
         if (condition.includes("7000")) setCheckbox("7000");
 
-        // code was broken so copilot told me to add this
         const newCheckbox = document.getElementById('new-condition') as HTMLInputElement;
         const refurbishedCheckbox = document.getElementById('refurbished-condition') as HTMLInputElement;
         const usedCheckbox = document.getElementById('used-condition') as HTMLInputElement;
@@ -234,16 +225,10 @@
         updateMainCheckboxState(refurbishedCheckbox, document.querySelectorAll<HTMLInputElement>('.other-refurbished-condition'));
         updateMainCheckboxState(usedCheckbox, document.querySelectorAll<HTMLInputElement>('.other-used-condition'));
 
-
-        // allResults = data?.results || [];
-        browserIsFirefox = navigator.userAgent.toLowerCase().includes("firefox");
-
-        // Checkbox Accordions
         const carets = document.getElementsByClassName("condition-accordion-caret");
         let index;
         for (index = 0; index < carets.length; index++) {
             carets[index].addEventListener("click", function(this: HTMLElement) {
-                // const panel = this.nextElementSibling as HTMLElement;
                 let panel = this.nextElementSibling as HTMLElement | null;
                 while (panel && !panel.classList.contains("panel")) {
                     panel = panel.nextElementSibling as HTMLElement | null;
@@ -259,11 +244,6 @@
             });
         }
     });
-
-    // function updateMinMaxPrices() {
-    //     const updatedMinMaxUrl = replaceSearchParam(((replaceSearchParam(url, 'minPrice', minPrice) as unknown) as URL), 'maxPrice', maxPrice)
-    //     window.location.href = updatedMinMaxUrl;
-    // };
 
     function updateMinMaxPrices() {
         const updatedUrl = new URL(window.location.href);
@@ -298,21 +278,24 @@
     }
 
     function updateSort() {
-        console.log('📊 [Client] Debug: Sort changed to:', sortBy)
+        // console.log('📊 [Client] Debug: Sort changed to:', sortBy)
         const updatedUrl = new URL(window.location.href);
         updatedUrl.searchParams.set('sort', sortBy);
         window.location.href = updatedUrl.toString();
     }
 </script>
 
+{#if searchbar}
 <div id="searchresults-title-grid">
     <a href={baseUrl} class="inline-block" aria-label="Go to home page">
         <div class="fa-solid fa-house-chimney inline-block" aria-label="Go to home page"></div>
     </a>
-    {#if width >= 888}
-    <Titles large style="margin-top: -15px; margin-bottom: 15px;">Search Results</Titles>
-    {:else}
-    <Titles custom-58px style="margin-top: -15px; margin-bottom: 15px;">Search Results</Titles>
+    {#if title && title !== ""}
+        {#if width >= 888}
+            <Titles large style="margin-top: -15px; margin-bottom: 15px;">{title}</Titles>
+        {:else}
+            <Titles custom-58px style="margin-top: -15px; margin-bottom: 15px;">{title}</Titles>
+        {/if}
     {/if}
 
     <div class="search-row">
@@ -325,7 +308,10 @@
             <button type="submit" class="searchbutton" onclick={handleSubmit}>Search</button>
     </div>
 </div>
+{/if}
+
 <div id="main-flexbox">
+    {#if sidebar}
     <div id="sidebar">
         <h1>Filters</h1>
             <label for="exclusions-flexbox" class="block">
@@ -420,7 +406,7 @@
             <label for="condition-boxes">Item Conditions:</label>
             <div id="condition-boxes">
 
-            <label> <!-- "New" checkbox - Category -->
+            <label>
                 <input type="checkbox" id="new-condition" class="condition-box" data-id="1000">
                 New&nbsp;&nbsp;
             </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
@@ -438,7 +424,7 @@
                 <br>
             </div>
 
-            <label> <!-- "Refurbished" checkbox - Category -->
+            <label>
                 <input type="checkbox" id="refurbished-condition" class="condition-box" data-id="">
                 Refurbished&nbsp;&nbsp;
             </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
@@ -471,7 +457,7 @@
                 <br>
             </div>
 
-            <label> <!-- "Used" checkbox - Category -->
+            <label>
                 <input type="checkbox" id="used-condition" class="condition-box" data-id="">
                 Used&nbsp;&nbsp;
             </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
@@ -511,6 +497,7 @@
             <br>                
         </div>
     </div>
+    {/if}
     <div id="results-container">
         {@render children()}
     </div>

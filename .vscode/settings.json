@@ -1,5 +1,13 @@
 {
     "svelte.plugin.svelte.compilerWarnings": {
         "css_unused_selector": "ignore",
-    }
+    },
+
+    "emmet.includeLanguages": {
+        "html": "css",
+        "svelte": "css"
+    },
+
+    "terminal.integrated.scrollback": 5000,
+    "workbench.tree.indent": 12,
 }

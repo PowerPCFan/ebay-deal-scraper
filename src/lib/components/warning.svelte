@@ -1,9 +1,8 @@
 <script lang="ts">
     let { children, redtext, ...rest } = $props();
     let bold: boolean = $state(false);
-    for (const key in rest) {
-        const match = key.match(/\bbold\b/);
-        if (match) {bold = true}
+    for (const key in rest) { 
+        if (key.match(/\bbold\b/)) { bold = true }
     }
 </script>
 

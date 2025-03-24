@@ -14,3 +14,62 @@
 .linebreak-flexbasis {
     flex-basis: 100%;
 }
+
+
+.ta-center {
+    text-align: center;
+}
+
+
+
+// only used in /itm as of rn
+        
+.heading {
+    color: $text;
+    font-family: $headingFont;
+}
+
+.bodyFontHeading {
+    color: $text;
+    font-family: $bodyFont;
+}
+
+.body {
+    color: $text;
+    font-family: $bodyFont;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.lightenhr {
+    opacity: 30%;
+    height: 1px;
+}
+
+.m1r {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.m1r-b {
+    margin-bottom: 1rem;
+}
+
+.m1r-t {
+    margin-top: 1rem;
+}
+
+.m05r {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.m05r-b {
+    margin-bottom: 0.5rem;
+}
+
+.m05r-t {
+    margin-top: 0.5rem;
+}

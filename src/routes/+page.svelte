@@ -5,25 +5,27 @@
     import Tooltip from '$lib/components/tooltip.svelte';
     import Warning from '$lib/components/warning.svelte';
 
-    let width: number;
+    let width: number = $state();
 
-    let searchQuery: string = "";
-    let exclusions: string = ""
-    let filterAuction: boolean = true;
-    let filterBuyItNow: boolean = true;
-    let sortBy: string = 'best-match';
+    let searchQuery: string = $state("");
+    let exclusions: string = $state("")
+    let filterAuction: boolean = $state(true);
+    let filterBuyItNow: boolean = $state(true);
+    let sortBy: string = $state('best-match');
     let pageNumber: number = 1;
-    let minPrice: string = "";
-    let maxPrice: string = "";
-    let loading: boolean = false;
-    let condition: string = "";
+    let minPrice: string = $state("");
+    let maxPrice: string = $state("");
+    let loading: boolean = $state(false);
+    let condition: string = $state("");
 
-    $: exclusions = exclusions
-    .replace(/[^a-zA-Z, ]/g, "")           // Allow only lowercase letters and commas
-    .replace(/\s{2,}/g, " ")            // Replace consecutive spaces with a single space
-    .replace(/,{2,}/g, ",")             // Prevent consecutive commas
-    .replace(/,\s{2,}/g, ", ")          // Prevent ",  , " (comma + multiple spaces)
-    .replace(/(,)\1+/g, ",");           // Prevent consecutive commas (like , , ,)
+    $effect(() => {
+        exclusions = exclusions
+        .replace(/[^a-zA-Z, ]/g, "")           // Allow only lowercase letters and commas
+        .replace(/\s{2,}/g, " ")            // Replace consecutive spaces with a single space
+        .replace(/,{2,}/g, ",")             // Prevent consecutive commas
+        .replace(/,\s{2,}/g, ", ")          // Prevent ",  , " (comma + multiple spaces)
+        .replace(/(,)\1+/g, ",");           // Prevent consecutive commas (like , , ,)
+    });
 
     function buildConditionString() {
         const conditionIds = Array.from(document.querySelectorAll('.condition-box:checked') as NodeListOf<HTMLInputElement>)
@@ -31,7 +33,7 @@
             .filter(id => id !== null && id !== "")
             .join('|');    
         const condition = conditionIds.replace(/\|{2,}/g, '|');
-        console.log(`[Client] Debug: Condition String: ${condition}`)
+        // console.log(`[Client] Debug: Condition String: ${condition}`)
         return condition
     }
 
@@ -39,7 +41,7 @@
         searchQuery === ''
         if (searchQuery === '') { 
             alert(`Error: no search query entered.`)
-            console.log(`Exclusions: ${exclusions}`)
+            // console.log(`Exclusions: ${exclusions}`)
         } else { 
             pageNumber = 1; // Reset page number on new search
             loading = true;
@@ -69,7 +71,7 @@
             }).toString();
              
             goto(`/results?${queryParams}`);
-            console.log('[Client] Debug: Navigating to results page:', `/results?${queryParams}`);
+            // console.log('[Client] Debug: Navigating to results page:', `/results?${queryParams}`);
         }
     }
 
@@ -189,7 +191,7 @@
 
 <svelte:window bind:innerWidth={width} />
 
-<main id="sveltekit-body">
+<main class="sveltekit-body">
     {#if width >= 816}
     <Titles large>eBay Deal Scraper</Titles>
     {:else}
@@ -206,10 +208,10 @@
             type="text"
             id="search" 
             bind:value={searchQuery}
-            on:input={() => console.log('📝 [Client] Debug: Search query updated:', searchQuery)} 
-            on:keydown={handleSubmitEnter}
+            oninput={() => console.log('📝 [Client] Debug: Search query updated:', searchQuery)} 
+            onkeydown={handleSubmitEnter}
             placeholder="Enter search query..." />
-            <button type="submit" class="searchbutton" on:click={handleSubmit}>Search</button>
+            <button type="submit" class="searchbutton" onclick={handleSubmit}>Search</button>
         </div>
         <div class="accordio">
             <div class="section">
@@ -219,7 +221,8 @@
                         <br>
                         <!-- <label class="block" for="exclusions"><span class="tooltip">Exclude Words<sup class="tooltip-questionmark">?</sup>: <span class="tooltiptext"><b>Exclude Words</b><br><br>Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word "box", you can type the word "box" into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code><br><br><strong>You can easily insert commas by pressing space on your keyboard.</strong></span></span></label>  -->
                         <label class="block"><Tooltip fontsize="1rem" questionmark title="Exclude Words" text="Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word &quot;box&quot;, you can type the word &quot;box&quot; into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code>">Exclude Words</Tooltip></label>
-                        <input class="block" type="text" id="exclusions" bind:value={exclusions} on:input={() => console.log('📝 [Client] Debug: Search Exclusions updated:', exclusions)} placeholder="Enter words to exclude...">
+                        <input class="block" type="text" id="exclusions" bind:value={exclusions} oninput={() => console.log('📝 [Client] Debug: Search Exclusions updated:', exclusions)} 
+                        placeholder="Enter words to exclude...">
                         <br>
                         <label for="listing-type">Listing Type:</label>
                         <div id="listing-type">
@@ -235,7 +238,7 @@
                         </div>
                 
                         <label class="block" for="sort" style="margin-top: 15px !important;">Sort By:</label>
-                        <select class="block" id="sort" bind:value={sortBy} on:change={() => console.log('📊 [Client] Debug: Sort changed to:', sortBy)}>
+                        <select class="block" id="sort" bind:value={sortBy} onchange={() => console.log('📊 [Client] Debug: Sort changed to:', sortBy)}>
                             <option value="best-match">Best Match</option>
                             <option value="price">Price + Shipping (lowest to highest)</option>
                             <option value="-price">Price + Shipping (highest to lowest)</option>

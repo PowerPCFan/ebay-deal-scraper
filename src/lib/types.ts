@@ -21,18 +21,6 @@ export interface ApiResponse {
     results: SearchResult[];
 }
 
-// export type PageData = {
-//     results: Array<{
-//         title: string;
-//         price: string;
-//         shipping: string;
-//         type: string;
-//         timeRemaining?: string;
-//         link: string;
-//         thumbnail: string;
-//     }>;
-// };
-
 export type PageData = {
     results: SearchResult[];
 };
@@ -44,18 +32,46 @@ export interface EbayItem {
         value: string;
     };
     bidCount: number;
-    shippingOptions: Array<{ shippingCost: { value: string } }>;
+    shippingOptions: Array<{ 
+        shippingServiceCode: string;
+        shippingCost: { 
+            value: string;
+        };
+    }>;
     buyingOptions: string[];
     itemEndDate: string;
     itemWebUrl: string;
-    itemnumber: string;
-    image: { imageUrl: string };
+    description: string;
+    legacyItemId: string;
+    image: {
+        imageUrl: string;
+        height: number;
+        width: number;
+    };
+    additionalImages?: Array<{
+        imageUrl: string;
+        height: number;
+        width: number;
+    }>;
     seller?: {
         username: string;
         feedbackScore: number;
         feedbackPercentage: string;
     };
     conditionId: string;
+    estimatedAvailabilities?: Array<{
+        estimatedAvailabilityStatus: string;
+        estimatedAvailableQuantity: number;
+        estimatedSoldQuantity: number;
+        estimatedRemainingQuantity: number;
+        deliveryOptions: string[];
+    }>;
+    itemLocation?: {
+        city: string; 
+        stateOrProvince: string;
+        postalCode: string;
+        country: string; 
+    }
 }
 
 export interface TokenInfo {
@@ -63,4 +79,6 @@ export interface TokenInfo {
     expiresAt: number;
 }
 
-// I don't know what this is all for, but the AI generated part of +page.server.ts and the /results svelte page doesn't seem to work without this
+// I don't know why these types are in an external file
+// this was AI generated at one point and I never bothered to change it
+// it's still necessary for operation

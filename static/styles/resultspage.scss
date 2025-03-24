@@ -188,7 +188,8 @@
         gap: 10px;
         width: 100%;
         grid-column: 2;
-        grid-row: 2;
+        // grid-row: 2;
+        align-items: center;
     }
 
     $transitionDuration: 0.2s;
@@ -225,7 +226,8 @@
 
     .searchbutton {
         flex-shrink: 0;
-        align-self: stretch;
+        // align-self: stretch;
+        align-self: center;
         white-space: nowrap;
         outline: none;
         border: none;
@@ -440,7 +442,8 @@
         gap: 10px;
         width: 100%;
         grid-column: 1;
-        grid-row: 3;
+        // grid-row: 3;
+        align-items: center;
     }
 
     $transitionDuration: 0.2s;

@@ -194,6 +194,10 @@ export const load: PageServerLoad = async ({ url }) => {
             }
 
             const data = await response.json();
+
+            // print entire response for debug  
+            // logDebug('📦 Complete API response.json:', JSON.stringify(data, null, 2));
+
             authRetries = 0; // Reset counter on success
 
             if (!data.itemSummaries) {
@@ -217,26 +221,17 @@ export const load: PageServerLoad = async ({ url }) => {
                 const future = Math.trunc(Number(new Date(item.itemEndDate).getTime() / 1000))
                 const unformattedTimeRemaining = Math.trunc(future - now)
                 const timeRemaining: string = formatTimeDifference(unformattedTimeRemaining);
-                
-                // get item number from url
-                let itemnumber = ''
-                const match = item.itemWebUrl.match(/\/itm\/(\d+)\?/);
-                if (match) {
-                    itemnumber = match[1];
-                } else {
-                    logDebug("Item number not found in URL.");
-                }
 
                 const processed = {
                     title: item.title,
                     price: item.price?.value || 'N/A',
                     bidprice: item.currentBidPrice?.value || 'N/A',
-                    bidcount: item.bidCount || 0, 
+                    bidcount: item.bidCount || 0,
                     shipping: shippingText,
+                    itemnumber: item?.legacyItemId,
                     type: item.buyingOptions?.[0] || 'Unknown',
                     timeRemaining: timeRemaining,
                     link: item.itemWebUrl,
-                    itemnumber: itemnumber,
                     thumbnail: 'https://wsrv.nl/?url=' + encodeURIComponent(item.image?.imageUrl) || '',
                     sellerName: item.seller?.username || 'N/A',
                     feedbackScore: item.seller?.feedbackScore || 0,
