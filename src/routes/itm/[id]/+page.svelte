@@ -11,6 +11,8 @@
     let { data } = $props();
     let { item }: { item: any } = data;
 
+    let width: number = $state();
+
     let sellerUrl: string = $state(`https://www.ebay.com/sch/i.html?_ssn=${item.sellerName}`);
     let quantity: string = $state("1");
     let biddingEnded: boolean = $state();
@@ -46,6 +48,7 @@
         biddingEnded = item.timeRemaining === "0s" && item.auction ? true : false;
     });
 </script>
+<svelte:window bind:innerWidth={width} />
 
 {#if item.hasVariations}
     <div class="variations">
@@ -141,8 +144,11 @@
                     <div class="body m05r-t">Located in: {item.city}, {item.state}, {item.country}</div>
                 </div>
             </div>
+            {#if width < 816}
+            <hr class="lightenhr">
+            {/if}
             <div class="description">
-                <div class="desc-title bodyFontHeading m05r"><strong>Item Details and Description:</strong></div>
+                <div class="desc-title bodyFontHeading m05r-b"><strong>Item Details and Description:</strong></div>
                 <div class="body">{@html item.description}</div>
             </div>
         </SidebarWrapper>
@@ -211,7 +217,17 @@
         align-items: start;
     }
 
-    .image {
+    @media (max-width: #{$breakpoint - 1}) {
+        .container {
+            flex-direction: column;
+        }
+
+        .image {
+            flex: 1.2;
+        }
+    }
+
+    .image { // flexbox to left inside .container - contains the image carousel
         flex: 1.4;
         min-width: 0;
         max-width: 1000px;
@@ -226,7 +242,7 @@
         }
     }
 
-    .information {
+    .information { // element to the right inside .container - contains info about the item
         flex: 1;
         min-width: 200px;
         max-width: 700px;
@@ -247,7 +263,7 @@
         }
     }
 
-    .description {
+    .description { // item description - below .container
         overflow-x: scroll;
         padding: 1rem;
         max-width: 99svw;

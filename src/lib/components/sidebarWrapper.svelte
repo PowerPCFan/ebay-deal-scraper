@@ -1,6 +1,7 @@
 <script lang="ts">
     import Titles from "$lib/components/titles.svelte";
     import Tooltip from "$lib/components/tooltip.svelte";
+    import Accordion from "./accordion.svelte";
     import { onMount } from "svelte";
     
     let { children, title, ...rest } = $props();
@@ -14,7 +15,7 @@
     
     let loading: boolean = $state(false);
     let pageNumber: number = $state(1);
-    let width: number;
+    let width: number = $state();
 
     let url: URL;
     let baseUrl: string = $state('');
@@ -285,6 +286,8 @@
     }
 </script>
 
+<svelte:window bind:innerWidth={width} />
+
 {#if searchbar}
 <div id="searchresults-title-grid">
     <a href={baseUrl} class="inline-block" aria-label="Go to home page">
@@ -312,191 +315,385 @@
 
 <div id="main-flexbox">
     {#if sidebar}
-    <div id="sidebar">
-        <h1>Filters</h1>
-            <label for="exclusions-flexbox" class="block">
-                <Tooltip 
-                    fontsize="1rem" 
-                    questionmark 
-                    title="Exclude Words" 
-                    text="Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word &quot;box&quot;, you can type the word &quot;box&quot; into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code>"
-                    >Exclude Words
-                </Tooltip>
-            </label>
-            <div class="field-button-container" id="exclusions-flexbox">
-                <input 
-                    class="block" 
-                    type="text" 
-                    id="exclusions" 
-                    bind:value={exclusions} 
-                    onblur={(e) => {
-                        if ((e.target as HTMLInputElement).value !== url.searchParams.get('exclude')) {
-                            updateExclusions();
-                        }
-                    }}
-                    onkeydown={(e) => runIfEnterKey(e, updateExclusions)}
-                    placeholder="Enter words to exclude..."
-                >
-                <button 
-                    aria-label="Update Exclusions"
-                    onclick={updateExclusions}
-                    class="submit-button"
-                >
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-            <br>
-            <label for="listing-type">Listing Type:</label>
-            <div id="listing-type">
-                <label>
-                    <input id="auction-checkbox" class="listingtypecheckboxes" type="checkbox" bind:checked={filterAuction} onchange={updateFilter}>
-                    Auction
-                </label>
-                <br>
-                <label>
-                    <input id="buyitnow-checkbox" class="listingtypecheckboxes" type="checkbox" bind:checked={filterBuyItNow} onchange={updateFilter}>
-                    Buy It Now
-                </label>
-            </div>
-            
-            <label class="block" for="sort" style="margin-top: 15px !important;">Sort By:</label>
-            <select class="block" id="sort" bind:value={sortBy} onchange={updateSort}>
-                <option value="best-match">Best Match</option>
-                <option value="price">Price + Shipping (lowest to highest)</option>
-                <option value="-price">Price + Shipping (highest to lowest)</option>
-                <option value="newly-listed">List Time (new to old)</option>
-                {#if filterAuction && !filterBuyItNow}
-                    <option value="end-time">Auction End Time</option>
-                {/if}
-            </select>
-    
-            <label class="block" for="price-filter" style="margin-top: 15px !important;">Price:</label>
-            <div class="field-button-container" id="price-filter">
-                <span>$</span>
-                <input 
-                    type="text" 
-                    inputmode="numeric" 
-                    id="minPrice" 
-                    bind:value={minPrice} 
-                    onblur={(e) => {
-                        if ((e.target as HTMLInputElement).value !== url.searchParams.get('minPrice')) {
-                            updateMinMaxPrices();
-                        }
-                    }}
-                    onkeydown={(e) => runIfEnterKey(e, updateMinMaxPrices)}
-                    placeholder="Min"
-                >
-                <span>to $</span>
-                <input 
-                    type="text" 
-                    inputmode="numeric" 
-                    id="maxPrice" 
-                    bind:value={maxPrice} 
-                    onblur={(e) => {
-                        if ((e.target as HTMLInputElement).value !== url.searchParams.get('maxPrice')) {
-                            updateMinMaxPrices();
-                        }
-                    }}
-                    onkeydown={(e) => runIfEnterKey(e, updateMinMaxPrices)}
-                    placeholder="Max"
-                >
-                <button aria-label="Update Min/Max Prices" onclick={updateMinMaxPrices} class="submit-button"><i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-            <br>
-            <label for="condition-boxes">Item Conditions:</label>
-            <div id="condition-boxes">
+        {#if width < 816}
+            <Accordion title="Search Filters" width="98%">
+                <div id="sidebar">
+                    <h1>Filters</h1>
+                            <label for="exclusions-flexbox" class="block">
+                                <Tooltip 
+                                    fontsize="1rem" 
+                                    questionmark 
+                                    title="Exclude Words" 
+                                    text="Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word &quot;box&quot;, you can type the word &quot;box&quot; into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code>"
+                                    >Exclude Words
+                                </Tooltip>
+                            </label>
+                            <div class="field-button-container" id="exclusions-flexbox">
+                                <input 
+                                    class="body block" 
+                                    type="text" 
+                                    id="exclusions" 
+                                    bind:value={exclusions} 
+                                    onblur={(e) => {
+                                        if ((e.target as HTMLInputElement).value !== url.searchParams.get('exclude')) {
+                                            updateExclusions();
+                                        }
+                                    }}
+                                    onkeydown={(e) => runIfEnterKey(e, updateExclusions)}
+                                    placeholder="Enter words to exclude..."
+                                >
+                                <button 
+                                    aria-label="Update Exclusions"
+                                    onclick={updateExclusions}
+                                    class="submit-button"
+                                >
+                                    <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                            <br>
+                            <label for="listing-type">Listing Type:</label>
+                            <div id="listing-type">
+                                <label>
+                                    <input id="auction-checkbox" class="listingtypecheckboxes" type="checkbox" bind:checked={filterAuction} onchange={updateFilter}>
+                                    Auction
+                                </label>
+                                <br>
+                                <label>
+                                    <input id="buyitnow-checkbox" class="listingtypecheckboxes" type="checkbox" bind:checked={filterBuyItNow} onchange={updateFilter}>
+                                    Buy It Now
+                                </label>
+                            </div>
+                            
+                            <label class="block" for="sort" style="margin-top: 15px !important;">Sort By:</label>
+                            <select class="body block" id="sort" bind:value={sortBy} onchange={updateSort}>
+                                <option value="best-match">Best Match</option>
+                                <option value="price">Price + Shipping (lowest to highest)</option>
+                                <option value="-price">Price + Shipping (highest to lowest)</option>
+                                <option value="newly-listed">List Time (new to old)</option>
+                                {#if filterAuction && !filterBuyItNow}
+                                    <option value="end-time">Auction End Time</option>
+                                {/if}
+                            </select>
+                    
+                            <label class="block" for="price-filter" style="margin-top: 15px !important;">Price:</label>
+                            <div class="field-button-container" id="price-filter">
+                                <span>$</span>
+                                <input 
+                                    type="text" 
+                                    inputmode="numeric" 
+                                    id="minPrice" 
+                                    class="body"
+                                    bind:value={minPrice} 
+                                    onblur={(e) => {
+                                        if ((e.target as HTMLInputElement).value !== url.searchParams.get('minPrice')) {
+                                            updateMinMaxPrices();
+                                        }
+                                    }}
+                                    onkeydown={(e) => runIfEnterKey(e, updateMinMaxPrices)}
+                                    placeholder="Min"
+                                >
+                                <span>to $</span>
+                                <input 
+                                    type="text" 
+                                    inputmode="numeric" 
+                                    id="maxPrice" 
+                                    class="body"
+                                    bind:value={maxPrice} 
+                                    onblur={(e) => {
+                                        if ((e.target as HTMLInputElement).value !== url.searchParams.get('maxPrice')) {
+                                            updateMinMaxPrices();
+                                        }
+                                    }}
+                                    onkeydown={(e) => runIfEnterKey(e, updateMinMaxPrices)}
+                                    placeholder="Max"
+                                >
+                                <button aria-label="Update Min/Max Prices" onclick={updateMinMaxPrices} class="submit-button"><i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                            <br>
+                            <label for="condition-boxes">Item Conditions:</label>
+                            <div id="condition-boxes">
+        
+                            <label>
+                                <input type="checkbox" id="new-condition" class="condition-box" data-id="1000">
+                                New&nbsp;&nbsp;
+                            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                            <br>
+                            <div class="panel">
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1500">
+                                    Open Box
+                                </label>
+                                <br>
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1750">
+                                    New (with defects)
+                                </label>
+                                <br>
+                            </div>
+        
+                            <label>
+                                <input type="checkbox" id="refurbished-condition" class="condition-box" data-id="">
+                                Refurbished&nbsp;&nbsp;
+                            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                            <br>
+                            <div class="panel">
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2000">
+                                    Certified Refurbished
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2010">
+                                    Excellent
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2020">
+                                    Very Good
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2030">
+                                    Good
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2500">
+                                    Refurbished by Seller
+                                </label>
+                                <br>
+                            </div>
+        
+                            <label>
+                                <input type="checkbox" id="used-condition" class="condition-box" data-id="">
+                                Used&nbsp;&nbsp;
+                            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                            <br>
+                            <div class="panel">
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2750">
+                                    Like New
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2990|3000">
+                                    Excellent
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="3010|4000">
+                                    Very Good
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="5000">
+                                    Good
+                                </label>
+                                <br>                    
+                                <label>
+                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="6000">
+                                    Fair
+                                </label>
+                                <br>
+                            </div>
+        
+                            <label>
+                                <input type="checkbox" id="notworking-condition" class="condition-box" data-id="7000">
+                                For parts or not working
+                            </label>
+                            <br>                
+                        </div>
+                </div>
+            </Accordion>
+        {:else}
+            <div id="sidebar">
+                <h1>Filters</h1>
+                        <label for="exclusions-flexbox" class="block">
+                            <Tooltip 
+                                fontsize="1rem" 
+                                questionmark 
+                                title="Exclude Words" 
+                                text="Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word &quot;box&quot;, you can type the word &quot;box&quot; into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code>"
+                                >Exclude Words
+                            </Tooltip>
+                        </label>
+                        <div class="field-button-container" id="exclusions-flexbox">
+                            <input 
+                                class="body block" 
+                                type="text" 
+                                id="exclusions" 
+                                bind:value={exclusions} 
+                                onblur={(e) => {
+                                    if ((e.target as HTMLInputElement).value !== url.searchParams.get('exclude')) {
+                                        updateExclusions();
+                                    }
+                                }}
+                                onkeydown={(e) => runIfEnterKey(e, updateExclusions)}
+                                placeholder="Enter words to exclude..."
+                            >
+                            <button 
+                                aria-label="Update Exclusions"
+                                onclick={updateExclusions}
+                                class="submit-button"
+                            >
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <br>
+                        <label for="listing-type">Listing Type:</label>
+                        <div id="listing-type">
+                            <label>
+                                <input id="auction-checkbox" class="listingtypecheckboxes" type="checkbox" bind:checked={filterAuction} onchange={updateFilter}>
+                                Auction
+                            </label>
+                            <br>
+                            <label>
+                                <input id="buyitnow-checkbox" class="listingtypecheckboxes" type="checkbox" bind:checked={filterBuyItNow} onchange={updateFilter}>
+                                Buy It Now
+                            </label>
+                        </div>
+                        
+                        <label class="block" for="sort" style="margin-top: 15px !important;">Sort By:</label>
+                        <select class="body block" id="sort" bind:value={sortBy} onchange={updateSort}>
+                            <option value="best-match">Best Match</option>
+                            <option value="price">Price + Shipping (lowest to highest)</option>
+                            <option value="-price">Price + Shipping (highest to lowest)</option>
+                            <option value="newly-listed">List Time (new to old)</option>
+                            {#if filterAuction && !filterBuyItNow}
+                                <option value="end-time">Auction End Time</option>
+                            {/if}
+                        </select>
+                
+                        <label class="block" for="price-filter" style="margin-top: 15px !important;">Price:</label>
+                        <div class="field-button-container" id="price-filter">
+                            <span>$</span>
+                            <input 
+                                type="text" 
+                                inputmode="numeric" 
+                                id="minPrice" 
+                                class="body"
+                                bind:value={minPrice} 
+                                onblur={(e) => {
+                                    if ((e.target as HTMLInputElement).value !== url.searchParams.get('minPrice')) {
+                                        updateMinMaxPrices();
+                                    }
+                                }}
+                                onkeydown={(e) => runIfEnterKey(e, updateMinMaxPrices)}
+                                placeholder="Min"
+                            >
+                            <span>to $</span>
+                            <input 
+                                type="text" 
+                                inputmode="numeric" 
+                                id="maxPrice" 
+                                class="body"
+                                bind:value={maxPrice} 
+                                onblur={(e) => {
+                                    if ((e.target as HTMLInputElement).value !== url.searchParams.get('maxPrice')) {
+                                        updateMinMaxPrices();
+                                    }
+                                }}
+                                onkeydown={(e) => runIfEnterKey(e, updateMinMaxPrices)}
+                                placeholder="Max"
+                            >
+                            <button aria-label="Update Min/Max Prices" onclick={updateMinMaxPrices} class="submit-button"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <br>
+                        <label for="condition-boxes">Item Conditions:</label>
+                        <div id="condition-boxes">
 
-            <label>
-                <input type="checkbox" id="new-condition" class="condition-box" data-id="1000">
-                New&nbsp;&nbsp;
-            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
-            <br>
-            <div class="panel">
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1500">
-                    Open Box
-                </label>
-                <br>
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1750">
-                    New (with defects)
-                </label>
-                <br>
-            </div>
+                        <label>
+                            <input type="checkbox" id="new-condition" class="condition-box" data-id="1000">
+                            New&nbsp;&nbsp;
+                        </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                        <br>
+                        <div class="panel">
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1500">
+                                Open Box
+                            </label>
+                            <br>
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1750">
+                                New (with defects)
+                            </label>
+                            <br>
+                        </div>
 
-            <label>
-                <input type="checkbox" id="refurbished-condition" class="condition-box" data-id="">
-                Refurbished&nbsp;&nbsp;
-            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
-            <br>
-            <div class="panel">
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2000">
-                    Certified Refurbished
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2010">
-                    Excellent
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2020">
-                    Very Good
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2030">
-                    Good
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2500">
-                    Refurbished by Seller
-                </label>
-                <br>
-            </div>
+                        <label>
+                            <input type="checkbox" id="refurbished-condition" class="condition-box" data-id="">
+                            Refurbished&nbsp;&nbsp;
+                        </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                        <br>
+                        <div class="panel">
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2000">
+                                Certified Refurbished
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2010">
+                                Excellent
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2020">
+                                Very Good
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2030">
+                                Good
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2500">
+                                Refurbished by Seller
+                            </label>
+                            <br>
+                        </div>
 
-            <label>
-                <input type="checkbox" id="used-condition" class="condition-box" data-id="">
-                Used&nbsp;&nbsp;
-            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
-            <br>
-            <div class="panel">
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2750">
-                    Like New
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2990|3000">
-                    Excellent
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="3010|4000">
-                    Very Good
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="5000">
-                    Good
-                </label>
-                <br>                    
-                <label>
-                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="6000">
-                    Fair
-                </label>
-                <br>
-            </div>
+                        <label>
+                            <input type="checkbox" id="used-condition" class="condition-box" data-id="">
+                            Used&nbsp;&nbsp;
+                        </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                        <br>
+                        <div class="panel">
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2750">
+                                Like New
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2990|3000">
+                                Excellent
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="3010|4000">
+                                Very Good
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="5000">
+                                Good
+                            </label>
+                            <br>                    
+                            <label>
+                                <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="6000">
+                                Fair
+                            </label>
+                            <br>
+                        </div>
 
-            <label>
-                <input type="checkbox" id="notworking-condition" class="condition-box" data-id="7000">
-                For parts or not working
-            </label>
-            <br>                
-        </div>
-    </div>
+                        <label>
+                            <input type="checkbox" id="notworking-condition" class="condition-box" data-id="7000">
+                            For parts or not working
+                        </label>
+                        <br>                
+                    </div>
+            </div>
+        {/if}
     {/if}
     <div id="results-container">
         {@render children()}

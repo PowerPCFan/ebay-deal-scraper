@@ -4,6 +4,7 @@
     import { onMount } from 'svelte';
     import Tooltip from '$lib/components/tooltip.svelte';
     import Warning from '$lib/components/warning.svelte';
+    import Accordion from '$lib/components/accordion.svelte';
 
     let width: number = $state();
 
@@ -213,145 +214,141 @@
             placeholder="Enter search query..." />
             <button type="submit" class="searchbutton" onclick={handleSubmit}>Search</button>
         </div>
-        <div class="accordio">
-            <div class="section">
-                <div class="section-title-filters" id="section-title-filters"><i id="filters-accordion-chevron" class="fa-solid fa-chevron-right" aria-hidden="true"></i>&nbsp;&nbsp;Search Filters</div>
-                <div class="section-content-filters" id="section-content-filters"> 
-                    <div class="text" id="text-filters">
-                        <br>
-                        <!-- <label class="block" for="exclusions"><span class="tooltip">Exclude Words<sup class="tooltip-questionmark">?</sup>: <span class="tooltiptext"><b>Exclude Words</b><br><br>Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word "box", you can type the word "box" into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code><br><br><strong>You can easily insert commas by pressing space on your keyboard.</strong></span></span></label>  -->
-                        <label class="block"><Tooltip fontsize="1rem" questionmark title="Exclude Words" text="Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word &quot;box&quot;, you can type the word &quot;box&quot; into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code>">Exclude Words</Tooltip></label>
-                        <input class="block" type="text" id="exclusions" bind:value={exclusions} oninput={() => console.log('📝 [Client] Debug: Search Exclusions updated:', exclusions)} 
-                        placeholder="Enter words to exclude...">
-                        <br>
-                        <label for="listing-type">Listing Type:</label>
-                        <div id="listing-type">
-                            <label>
-                                <input class="listingtypecheckboxes" type="checkbox" bind:checked={filterAuction}>
-                                Auction
-                            </label>
-                            <br>
-                            <label>
-                                <input class="listingtypecheckboxes" type="checkbox" bind:checked={filterBuyItNow}>
-                                Buy It Now
-                            </label>
-                        </div>
+        <Accordion width="min(635px, 80vw)" title="Search Filters">
+            <div id="text-filters">
+                <br>
+                <!-- <label class="block" for="exclusions"><span class="tooltip">Exclude Words<sup class="tooltip-questionmark">?</sup>: <span class="tooltiptext"><b>Exclude Words</b><br><br>Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word "box", you can type the word "box" into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code><br><br><strong>You can easily insert commas by pressing space on your keyboard.</strong></span></span></label>  -->
+                <label class="block"><Tooltip fontsize="1rem" questionmark title="Exclude Words" text="Word exclusion lets you filter out results containing a certain word. <br><br>For instance, if you are searching for something and you don't want results that contain the word &quot;box&quot;, you can type the word &quot;box&quot; into the Exclude Words box to remove all results containing the word box. <br><br>You can enter one word or multiple words. <br><br><strong>NOTE:</strong> This feature will only work properly if you separate words using commas. For example: <code>box, backplate, not working, for parts</code>">Exclude Words</Tooltip></label>
+                <input class="body block" type="text" id="exclusions" bind:value={exclusions} oninput={() => console.log('📝 [Client] Debug: Search Exclusions updated:', exclusions)} 
+                placeholder="Enter words to exclude...">
+                <br>
+                <label for="listing-type">Listing Type:</label>
+                <div id="listing-type">
+                    <label>
+                        <input class="listingtypecheckboxes" type="checkbox" bind:checked={filterAuction}>
+                        Auction
+                    </label>
+                    <br>
+                    <label>
+                        <input class="listingtypecheckboxes" type="checkbox" bind:checked={filterBuyItNow}>
+                        Buy It Now
+                    </label>
+                </div>
+        
+                <label class="block" for="sort" style="margin-top: 15px !important;">Sort By:</label>
+                <select class="body block" id="sort" bind:value={sortBy} onchange={() => console.log('📊 [Client] Debug: Sort changed to:', sortBy)}>
+                    <option value="best-match">Best Match</option>
+                    <option value="price">Price + Shipping (lowest to highest)</option>
+                    <option value="-price">Price + Shipping (highest to lowest)</option>
+                    <option value="newly-listed">List Time (new to old)</option>
+                    {#if filterAuction && !filterBuyItNow}
+                        <option value="end-time">Auction End Time</option>
+                    {/if}
+                </select>
+        
+                <label class="block" for="minPrice" style="margin-top: 15px !important;">Min Price:</label>
+                <input class="body block" type="number" id="minPrice" bind:value={minPrice} placeholder="Enter min price">
+        
+                <label class="block" for="maxPrice" style="margin-top: 15px !important;">Max Price:</label>
+                <input class="body block" type="number" id="maxPrice" bind:value={maxPrice} placeholder="Enter max price">
                 
-                        <label class="block" for="sort" style="margin-top: 15px !important;">Sort By:</label>
-                        <select class="block" id="sort" bind:value={sortBy} onchange={() => console.log('📊 [Client] Debug: Sort changed to:', sortBy)}>
-                            <option value="best-match">Best Match</option>
-                            <option value="price">Price + Shipping (lowest to highest)</option>
-                            <option value="-price">Price + Shipping (highest to lowest)</option>
-                            <option value="newly-listed">List Time (new to old)</option>
-                            {#if filterAuction && !filterBuyItNow}
-                                <option value="end-time">Auction End Time</option>
-                            {/if}
-                        </select>
-                
-                        <label class="block" for="minPrice" style="margin-top: 15px !important;">Min Price:</label>
-                        <input class="block" type="number" id="minPrice" bind:value={minPrice} placeholder="Enter min price">
-                
-                        <label class="block" for="maxPrice" style="margin-top: 15px !important;">Max Price:</label>
-                        <input class="block" type="number" id="maxPrice" bind:value={maxPrice} placeholder="Enter max price">
-                        
+                <br>
+                <label for="condition-boxes">Item Conditions:</label>
+                <div id="condition-boxes">
+
+                    <label> <!-- "New" checkbox - Category -->
+                        <input type="checkbox" id="new-condition" class="condition-box" data-id="1000">
+                        New&nbsp;&nbsp;
+                    </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                    <br>
+                    <div class="panel">
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1500">
+                            Open Box
+                        </label>
                         <br>
-                        <label for="condition-boxes">Item Conditions:</label>
-                        <div id="condition-boxes">
-    
-                            <label> <!-- "New" checkbox - Category -->
-                                <input type="checkbox" id="new-condition" class="condition-box" data-id="1000">
-                                New&nbsp;&nbsp;
-                            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
-                            <br>
-                            <div class="panel">
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1500">
-                                    Open Box
-                                </label>
-                                <br>
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1750">
-                                    New (with defects)
-                                </label>
-                                <br>
-                            </div>
-    
-                            <label> <!-- "Refurbished" checkbox - Category -->
-                                <input type="checkbox" id="refurbished-condition" class="condition-box" data-id="">
-                                Refurbished&nbsp;&nbsp;
-                            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
-                            <br>
-                            <div class="panel">
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2000">
-                                    Certified Refurbished
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2010">
-                                    Excellent - Refurbished
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2020">
-                                    Very Good - Refurbished
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2030">
-                                    Good - Refurbished
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2500">
-                                    Refurbished by Seller
-                                </label>
-                                <br>
-                            </div>
-    
-                            <label> <!-- "Used" checkbox - Category -->
-                                <input type="checkbox" id="used-condition" class="condition-box" data-id="">
-                                Used&nbsp;&nbsp;
-                            </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
-                            <br>
-                            <div class="panel">
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2750">
-                                    Used - Like New
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2990|3000">
-                                    Used - Excellent
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="3010|4000">
-                                    Used - Very Good
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="5000">
-                                    Used - Good
-                                </label>
-                                <br>                    
-                                <label>
-                                    <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="6000">
-                                    Used - Fair
-                                </label>
-                                <br>
-                            </div>
-    
-                            <label>
-                                <input type="checkbox" id="notworking-condition" class="condition-box" data-id="7000">
-                                For parts or not working
-                            </label>
-                            <br>                
-                        </div>
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-new-condition" data-id="1750">
+                            New (with defects)
+                        </label>
+                        <br>
                     </div>
+
+                    <label> <!-- "Refurbished" checkbox - Category -->
+                        <input type="checkbox" id="refurbished-condition" class="condition-box" data-id="">
+                        Refurbished&nbsp;&nbsp;
+                    </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                    <br>
+                    <div class="panel">
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2000">
+                            Certified Refurbished
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2010">
+                            Excellent - Refurbished
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2020">
+                            Very Good - Refurbished
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2030">
+                            Good - Refurbished
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-refurbished-condition" data-id="2500">
+                            Refurbished by Seller
+                        </label>
+                        <br>
+                    </div>
+
+                    <label> <!-- "Used" checkbox - Category -->
+                        <input type="checkbox" id="used-condition" class="condition-box" data-id="">
+                        Used&nbsp;&nbsp;
+                    </label><div class="fa-solid fa-caret-down condition-accordion-caret inline-block"></div>
+                    <br>
+                    <div class="panel">
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2750">
+                            Used - Like New
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="2990|3000">
+                            Used - Excellent
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="3010|4000">
+                            Used - Very Good
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="5000">
+                            Used - Good
+                        </label>
+                        <br>                    
+                        <label>
+                            <input type="checkbox" class="condition-box indented-condition-box other-used-condition" data-id="6000">
+                            Used - Fair
+                        </label>
+                        <br>
+                    </div>
+
+                    <label>
+                        <input type="checkbox" id="notworking-condition" class="condition-box" data-id="7000">
+                        For parts or not working
+                    </label>
+                    <br>                
                 </div>
             </div>
-        </div>
+        </Accordion>
+
         {#if loading}
             <br>
             <Warning redtext="">Loading...</Warning>

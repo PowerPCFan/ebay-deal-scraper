@@ -15,8 +15,6 @@
     let url: URL = $state();
     let baseUrl: string = $state();
 
-    let width: number = $state();
-
     onMount(() => {
         url = new URL(window.location.href);
         baseUrl = url.origin;
@@ -37,8 +35,6 @@
         };
     })
 </script>
-
-<svelte:window bind:innerWidth={width} />
 
 <style lang="scss">
     @import "/static/styles/style.scss";
